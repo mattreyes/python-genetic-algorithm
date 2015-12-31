@@ -21,14 +21,11 @@ def initPopulation(size,genesNum,target):
 		i += 1
 	return population
 
-# takes two chromosomes and adds the parents to 
-# the population popn. they may have some genes crossed at
-# some random point.
-# assumes both chromosones has same number of genes
+# Takes two chromosomes with equal length and adds the parents to the population 
+# Genes may be crossed at some random point
 def crossChromosones(c1,c2,crossRate, mutRate,target, popn):
 	assert len(c1.encoding) > 0, "ERROR: Chromosones must have at least one gene."
-	# breeding
-	if random.uniform(0,1) <= crossRate:
+	if random.uniform(0,1) <= crossRate: # breeding
 		crossPoint = random.randint(0,len(c1.encoding)-1)
 		cross1 = c1.encoding[:crossPoint] + c2.encoding[crossPoint:]
 		cross2 = c2.encoding[:crossPoint] + c1.encoding[crossPoint:]
@@ -38,8 +35,7 @@ def crossChromosones(c1,c2,crossRate, mutRate,target, popn):
 		popn.append(mutateChromosone(c1,target,mutRate))
 		popn.append(mutateChromosone(c2,target,mutRate))
 		return True
-	# no breeding
-	else:
+	else: # no breeding
 		popn.append(c1)
 		popn.append(c2)
 		return False
@@ -58,7 +54,7 @@ def mutateChromosone(c, target, mutRate):
 			accStr += char
 	return Chromosone(accStr,target)
 
-# calculates the total fitness score of a population. returns a positive float
+# Calculates the total fitness score of a population. returns a positive float
 # or if it is a tolerable solution in population, returns a chormosone object.
 def totalFitness(population,target):
 	total = 0
@@ -84,41 +80,42 @@ def rouletteSelection(population, totalScore):
 ###############################################################
 
 # Parameters
-populationSize = 10
-numGenes = 10
-target = 69.7
-maxIterations = 5000
+populationSize = 20
+numGenes = 15
+maxIterations = 2000
 crossoverRate = 0.7
 mutationRate = 0.001
+
+print("Enter your target number:")
+target = float(input())
 
 from operator import attrgetter
 
 def geneticAlgorithm(populationSize,numGenes,target,maxIterations,crossoverRate,mutationRate):
-	# Initialize population
 	assert (populationSize > 2), "You need to have a population greater than 2."
 	print("Searching...")
-	currPop = initPopulation(populationSize, numGenes,target)
+	currPop = initPopulation(populationSize, numGenes,target) # Initialize population
 	numIterations = 0
 	while (numIterations < maxIterations):
 		currPopScore = totalFitness(currPop,target)
-		# if we get a Chromosone object (exact solution) then return 
 		if not (isinstance(currPopScore,int) or isinstance(currPopScore,float)):
-			print("Solution found! " + currPopScore.getEncoding() + " with target " + str(target) + " Took " + str(numIterations) + " iterations.")
-			return
+			print("Solution found! " + currPopScore.getEncoding() + " with target " 
+				+ str(target) + " Took " + str(numIterations) + " iterations.")
+			return # if we get a Chromosone object (exact solution) then return 
 		newPop = []
-		# loop to breed next generation
-		while (len(newPop) < populationSize):
+		while (len(newPop) < populationSize): # loop to breed next generation
 			parent1 = rouletteSelection(currPop,currPopScore)
 			parent2 = rouletteSelection(currPop,currPopScore)
 			if parent1 != parent2:
 				crossChromosones(parent1,parent2,crossoverRate, mutationRate,target,newPop)
 		numIterations += 1
-		if numIterations % 100 == 0:
-			print("Iteration " + str(numIterations))
+		if numIterations % 500 == 0:
+			print("Generation " + str(numIterations))
 		currPop = newPop
 
 	closeSoln = max(currPop, key=attrgetter('fitnessScore'))
-	print("Max generation reached. Closest solution is " + closeSoln.getEncoding() + "=" + str(closeSoln.result) + " with target " + str(target))
+	print("Max generation reached. Closest solution is " + closeSoln.getEncoding() + "=" 
+		+ str(closeSoln.result) + " with target " + str(target))
 
 
 geneticAlgorithm(populationSize,numGenes,target,maxIterations,crossoverRate,mutationRate)
