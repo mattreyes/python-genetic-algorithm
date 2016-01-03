@@ -37,7 +37,7 @@ class Chromosone:
 			elif char in "+-*/" and numAvailble==True and opr == "":
 				opr = char		
 
-		tolerance = 0.01 # can be adjusted
+		tolerance = 0.1 # can be adjusted
 		self.result = result
 		error = float(result)-float(target)
 		if (abs(error) < tolerance): 
