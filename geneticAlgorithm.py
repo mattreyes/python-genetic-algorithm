@@ -79,7 +79,7 @@ def rouletteSelection(population, totalScore):
 # Algorithm
 ###############################################################
 
-# Parameters
+# Parameters (can be tuned)
 populationSize = 20
 numGenes = 15
 maxIterations = 2000
